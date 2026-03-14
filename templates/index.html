@@ -1,0 +1,293 @@
+{% extends "base.html" %}
+
+{% block title %}LearnForge - Learn Anything{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto px-4 py-16 sm:py-24">
+    <div class="text-center mb-12">
+        <h1 class="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+            Learn <span class="text-brand-600 dark:text-brand-400">anything</span>, your way
+        </h1>
+        <p class="text-lg text-gray-600 dark:text-gray-400 max-w-xl mx-auto">
+            Enter any topic and AI will generate a personalized course with lessons, quizzes, and a final exam. Master it at your own pace.
+        </p>
+    </div>
+
+    <form id="generateForm" class="max-w-lg mx-auto">
+        <div class="flex flex-col sm:flex-row gap-3">
+            <input
+                type="text"
+                name="topic"
+                id="topicInput"
+                placeholder="e.g., JavaScript basics, Quantum physics, French cooking..."
+                required
+                class="flex-1 px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:border-brand-500 focus:ring-2 focus:ring-brand-200 outline-none text-gray-900 dark:text-white dark:bg-gray-800 text-lg"
+            >
+            <select id="difficultySelect" class="px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:border-brand-500 focus:ring-2 focus:ring-brand-200 outline-none text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800">
+                <option value="beginner">Beginner</option>
+                <option value="intermediate" selected>Intermediate</option>
+                <option value="advanced">Advanced</option>
+            </select>
+            <button
+                type="submit"
+                id="generateBtn"
+                class="px-6 py-3 bg-brand-600 text-white font-semibold rounded-lg hover:bg-brand-700 transition-colors whitespace-nowrap"
+            >
+                Generate Course
+            </button>
+        </div>
+    </form>
+
+    <div class="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
+        <div class="p-6">
+            <div class="w-12 h-12 bg-brand-100 dark:bg-brand-900 rounded-xl flex items-center justify-center mx-auto mb-3">
+                <svg class="w-6 h-6 text-brand-600 dark:text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                </svg>
+            </div>
+            <h3 class="font-semibold text-gray-900 dark:text-white mb-1">Instant Courses</h3>
+            <p class="text-sm text-gray-500 dark:text-gray-400">AI generates a full course in seconds, tailored to your topic</p>
+        </div>
+        <div class="p-6">
+            <div class="w-12 h-12 bg-brand-100 dark:bg-brand-900 rounded-xl flex items-center justify-center mx-auto mb-3">
+                <svg class="w-6 h-6 text-brand-600 dark:text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+            </div>
+            <h3 class="font-semibold text-gray-900 dark:text-white mb-1">Smart Quizzes</h3>
+            <p class="text-sm text-gray-500 dark:text-gray-400">AI-graded quizzes with multiple choice and short answer questions</p>
+        </div>
+        <div class="p-6">
+            <div class="w-12 h-12 bg-brand-100 dark:bg-brand-900 rounded-xl flex items-center justify-center mx-auto mb-3">
+                <svg class="w-6 h-6 text-brand-600 dark:text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                </svg>
+            </div>
+            <h3 class="font-semibold text-gray-900 dark:text-white mb-1">Self-Paced</h3>
+            <p class="text-sm text-gray-500 dark:text-gray-400">Progress through lessons at your own speed, unlock as you go</p>
+        </div>
+    </div>
+
+    <div id="coursesSection" class="{% if not courses %}hidden {% endif %}mt-16 border-t border-gray-200 dark:border-gray-700 pt-12">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">My Courses</h2>
+            <div class="flex gap-2 items-center">
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Search courses..."
+                    class="px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:border-brand-500 focus:ring-2 focus:ring-brand-200 outline-none text-sm w-48 dark:bg-gray-800 dark:text-white"
+                >
+                <div class="flex rounded-lg border border-gray-300 dark:border-gray-600 overflow-hidden">
+                    <button type="button" data-filter="all" class="filter-btn px-3 py-2 text-xs font-medium bg-brand-600 text-white">All</button>
+                    <button type="button" data-filter="in_progress" class="filter-btn px-3 py-2 text-xs font-medium bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 border-l border-gray-300 dark:border-gray-600">Active</button>
+                    <button type="button" data-filter="completed" class="filter-btn px-3 py-2 text-xs font-medium bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 border-l border-gray-300 dark:border-gray-600">Done</button>
+                </div>
+            </div>
+        </div>
+        <div id="coursesList" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {% for course in courses %}
+            {% if course.status != 'generating' and course.status != 'error' %}
+            <div class="course-card relative group" data-status="{{ course.status }}" data-title="{{ course.title|lower }}" data-topic="{{ course.topic|lower }}">
+                <a href="{{ url_for('course', course_id=course.id) }}"
+                   class="block p-5 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-brand-300 dark:hover:border-brand-600 hover:shadow-md transition-all">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="min-w-0">
+                            <h3 class="font-semibold text-gray-900 dark:text-white truncate">{{ course.title or course.topic }}</h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ course.topic }}</p>
+                        </div>
+                        {% if course.status == 'completed' %}
+                        <span class="shrink-0 px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-300">Completed</span>
+                        {% else %}
+                        <span class="shrink-0 px-2.5 py-1 rounded-full text-xs font-medium bg-brand-100 dark:bg-brand-900 text-brand-800 dark:text-brand-300">In Progress</span>
+                        {% endif %}
+                    </div>
+                    {% if course.progress %}
+                    <div class="mt-3">
+                        <div class="flex justify-between text-xs text-gray-500 dark:text-gray-400 mb-1">
+                            <span>Lesson {{ course.progress.current_lesson + 1 }}</span>
+                        </div>
+                        <div class="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-1.5">
+                            <div class="bg-brand-500 h-1.5 rounded-full" style="width: {{ [(course.progress.current_lesson / 7 * 100), 100] | min }}%"></div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </a>
+                <button onclick="deleteCourse({{ course.id }}, this)" class="absolute top-2 right-2 p-1.5 rounded-lg bg-white/80 dark:bg-gray-700/80 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 opacity-0 group-hover:opacity-100 transition-all border border-transparent hover:border-red-200 dark:hover:border-red-800" title="Delete course">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                </button>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+        <p id="noResults" class="hidden text-center text-gray-400 py-8">No courses match your search.</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const form = document.getElementById('generateForm');
+const btn = document.getElementById('generateBtn');
+const input = document.getElementById('topicInput');
+const diffSelect = document.getElementById('difficultySelect');
+const section = document.getElementById('coursesSection');
+const list = document.getElementById('coursesList');
+const searchInput = document.getElementById('searchInput');
+const noResults = document.getElementById('noResults');
+const isDark = () => document.documentElement.classList.contains('dark');
+let activeFilter = 'all';
+
+form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const topic = input.value.trim();
+    if (!topic) return;
+    const difficulty = diffSelect.value;
+
+    btn.disabled = true;
+    btn.textContent = 'Generating...';
+    btn.classList.add('opacity-50', 'cursor-not-allowed');
+    input.disabled = true;
+    diffSelect.disabled = true;
+
+    fetch('/generate', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({topic, difficulty})
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.error) { resetForm(); return; }
+
+        section.classList.remove('hidden');
+
+        const card = document.createElement('div');
+        card.id = 'generating-' + data.course_id;
+        card.className = `p-5 rounded-xl border shadow-sm ${isDark() ? 'bg-gray-800 border-yellow-700' : 'bg-white border-yellow-200'}`;
+        card.innerHTML = `
+            <div class="flex items-start justify-between gap-3">
+                <div class="min-w-0">
+                    <h3 class="font-semibold ${isDark() ? 'text-white' : 'text-gray-900'} truncate">${escapeHtml(topic)}</h3>
+                    <p class="text-sm ${isDark() ? 'text-gray-400' : 'text-gray-500'} mt-1">${escapeHtml(topic)} &middot; ${escapeHtml(difficulty)}</p>
+                </div>
+                <span class="shrink-0 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                    <svg class="animate-spin h-3 w-3" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Generating
+                </span>
+            </div>
+            <p class="text-xs text-gray-400 mt-3">This usually takes 15-30 seconds...</p>
+        `;
+        list.insertBefore(card, list.firstChild);
+
+        input.value = '';
+        resetForm();
+        pollCourse(data.course_id, topic);
+    })
+    .catch(() => resetForm());
+});
+
+function resetForm() {
+    btn.disabled = false;
+    btn.textContent = 'Generate Course';
+    btn.classList.remove('opacity-50', 'cursor-not-allowed');
+    input.disabled = false;
+    diffSelect.disabled = false;
+}
+
+function escapeHtml(s) {
+    const d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML;
+}
+
+function pollCourse(courseId, topic) {
+    fetch('/course/' + courseId + '/status')
+        .then(r => r.json())
+        .then(data => {
+            const card = document.getElementById('generating-' + courseId);
+            if (!card) return;
+
+            if (data.status === 'ready') {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'course-card relative group';
+                wrapper.dataset.status = 'in_progress';
+                wrapper.dataset.title = (data.title || topic).toLowerCase();
+                wrapper.dataset.topic = topic.toLowerCase();
+                wrapper.innerHTML = `
+                    <a href="/course/${courseId}" class="block p-5 ${isDark() ? 'bg-gray-800 border-green-700 hover:border-brand-600' : 'bg-white border-green-200 hover:border-brand-300'} rounded-xl border hover:shadow-md transition-all">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="min-w-0">
+                                <h3 class="font-semibold ${isDark() ? 'text-white' : 'text-gray-900'} truncate">${escapeHtml(data.title || topic)}</h3>
+                                <p class="text-sm ${isDark() ? 'text-gray-400' : 'text-gray-500'} mt-1">${escapeHtml(topic)}</p>
+                            </div>
+                            <span class="shrink-0 px-2.5 py-1 rounded-full text-xs font-medium ${isDark() ? 'bg-brand-900 text-brand-300' : 'bg-brand-100 text-brand-800'}">In Progress</span>
+                        </div>
+                        <p class="text-xs text-green-600 mt-3 font-medium">Ready! Click to start learning.</p>
+                    </a>
+                    <button onclick="deleteCourse(${courseId}, this)" class="absolute top-2 right-2 p-1.5 rounded-lg ${isDark() ? 'bg-gray-700/80' : 'bg-white/80'} text-gray-400 hover:text-red-500 ${isDark() ? 'hover:bg-red-900/30 hover:border-red-800' : 'hover:bg-red-50 hover:border-red-200'} opacity-0 group-hover:opacity-100 transition-all border border-transparent" title="Delete course">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                    </button>
+                `;
+                card.replaceWith(wrapper);
+            } else if (data.status === 'error') {
+                card.querySelector('.text-xs').textContent = 'Generation failed. Please try again.';
+                card.querySelector('.bg-yellow-100').className = 'shrink-0 px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800';
+                card.querySelector('.bg-red-100').textContent = 'Error';
+            } else {
+                setTimeout(() => pollCourse(courseId, topic), 2000);
+            }
+        })
+        .catch(() => setTimeout(() => pollCourse(courseId, topic), 3000));
+}
+
+// Delete course
+function deleteCourse(courseId, btnEl) {
+    if (!confirm('Delete this course? This cannot be undone.')) return;
+    const card = btnEl.closest('.course-card') || btnEl.closest('[id^="generating-"]');
+    if (card) card.style.opacity = '0.5';
+
+    fetch('/course/' + courseId + '/delete', { method: 'POST' })
+        .then(r => r.json())
+        .then(() => {
+            if (card) card.remove();
+            filterCourses();
+        })
+        .catch(() => { if (card) card.style.opacity = '1'; });
+}
+
+// Search & filter
+document.querySelectorAll('.filter-btn').forEach(b => {
+    b.addEventListener('click', function() {
+        const dk = isDark();
+        document.querySelectorAll('.filter-btn').forEach(x => {
+            x.className = `filter-btn px-3 py-2 text-xs font-medium ${dk ? 'bg-gray-800 text-gray-300 hover:bg-gray-700' : 'bg-white text-gray-600 hover:bg-gray-50'} border-l ${dk ? 'border-gray-600' : 'border-gray-300'}`;
+        });
+        this.className = 'filter-btn px-3 py-2 text-xs font-medium bg-brand-600 text-white border-l border-gray-300';
+        activeFilter = this.dataset.filter;
+        filterCourses();
+    });
+});
+
+searchInput.addEventListener('input', filterCourses);
+
+function filterCourses() {
+    const q = searchInput.value.toLowerCase().trim();
+    const cards = list.querySelectorAll('.course-card');
+    let visible = 0;
+    cards.forEach(card => {
+        const title = card.dataset.title || '';
+        const topic = card.dataset.topic || '';
+        const status = card.dataset.status || '';
+        const matchesSearch = !q || title.includes(q) || topic.includes(q);
+        const matchesFilter = activeFilter === 'all' || status === activeFilter;
+        const show = matchesSearch && matchesFilter;
+        card.style.display = show ? '' : 'none';
+        if (show) visible++;
+    });
+    noResults.classList.toggle('hidden', visible > 0 || list.querySelector('[id^="generating-"]'));
+}
+</script>
+{% endblock %}

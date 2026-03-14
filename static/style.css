@@ -1,0 +1,157 @@
+/* LearnForge custom styles */
+
+/* Lesson content markdown rendering */
+.lesson-content h1,
+.lesson-content h2,
+.lesson-content h3 {
+    font-weight: 700;
+    color: #111827;
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+}
+.lesson-content h1 { font-size: 1.5rem; }
+.lesson-content h2 { font-size: 1.25rem; }
+.lesson-content h3 { font-size: 1.125rem; }
+
+.lesson-content p {
+    margin-bottom: 1em;
+    line-height: 1.75;
+    color: #374151;
+}
+
+.lesson-content ul,
+.lesson-content ol {
+    margin-bottom: 1em;
+    padding-left: 1.5em;
+}
+.lesson-content ul { list-style-type: disc; }
+.lesson-content ol { list-style-type: decimal; }
+.lesson-content li { margin-bottom: 0.25em; line-height: 1.75; color: #374151; }
+
+.lesson-content code {
+    background: #f3f4f6;
+    padding: 0.125em 0.375em;
+    border-radius: 0.25rem;
+    font-size: 0.875em;
+    color: #dc2626;
+}
+
+.lesson-content pre {
+    background: #1f2937;
+    color: #e5e7eb;
+    padding: 1em;
+    border-radius: 0.5rem;
+    overflow-x: auto;
+    margin-bottom: 1em;
+}
+.lesson-content pre code {
+    background: none;
+    color: inherit;
+    padding: 0;
+}
+
+.lesson-content strong {
+    font-weight: 600;
+    color: #111827;
+}
+
+.lesson-content blockquote {
+    border-left: 4px solid #3b82f6;
+    padding-left: 1em;
+    margin-bottom: 1em;
+    color: #6b7280;
+    font-style: italic;
+}
+
+/* Dark mode lesson content */
+.dark .lesson-content h1,
+.dark .lesson-content h2,
+.dark .lesson-content h3 {
+    color: #f3f4f6;
+}
+
+.dark .lesson-content p,
+.dark .lesson-content li {
+    color: #d1d5db;
+}
+
+.dark .lesson-content code {
+    background: #374151;
+    color: #f87171;
+}
+
+.dark .lesson-content pre {
+    background: #111827;
+}
+
+.dark .lesson-content strong {
+    color: #f3f4f6;
+}
+
+.dark .lesson-content blockquote {
+    border-left-color: #60a5fa;
+    color: #9ca3af;
+}
+
+/* Chat reply markdown */
+.chat-reply p { margin-bottom: 0.5em; }
+.chat-reply p:last-child { margin-bottom: 0; }
+.chat-reply code {
+    background: #e5e7eb;
+    padding: 0.1em 0.3em;
+    border-radius: 0.2rem;
+    font-size: 0.85em;
+}
+.chat-reply pre {
+    background: #1f2937;
+    color: #e5e7eb;
+    padding: 0.6em;
+    border-radius: 0.375rem;
+    overflow-x: auto;
+    margin: 0.5em 0;
+    font-size: 0.8em;
+}
+.chat-reply pre code {
+    background: none;
+    color: inherit;
+    padding: 0;
+}
+.chat-reply ul, .chat-reply ol {
+    padding-left: 1.2em;
+    margin-bottom: 0.5em;
+}
+.chat-reply ul { list-style-type: disc; }
+.chat-reply ol { list-style-type: decimal; }
+
+.dark .chat-reply code {
+    background: #4b5563;
+    color: #f87171;
+}
+
+.dark .chat-reply pre {
+    background: #111827;
+}
+
+/* Smooth transitions */
+.question-block {
+    transition: opacity 0.3s ease;
+}
+
+/* Radio button styling */
+input[type="radio"] {
+    accent-color: #0f80f0;
+}
+
+/* Loading animation */
+@keyframes pulse-soft {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+.pulse-soft {
+    animation: pulse-soft 2s ease-in-out infinite;
+}
+
+/* Theme transition */
+html.dark {
+    color-scheme: dark;
+}
