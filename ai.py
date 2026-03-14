@@ -1,4 +1,5 @@
 import json
+import os
 from openai import OpenAI
 
 MODEL = "gpt-4o-mini"
@@ -10,7 +11,7 @@ def _get_client():
     if _client is None:
         _client = OpenAI(
             base_url="https://openrouter.ai/api/v1",
-            api_key="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"
+            api_key=os.environ.get("OPENROUTER_API_KEY")
         )
     return _client
 
